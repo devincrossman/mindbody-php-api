@@ -82,14 +82,16 @@ class MB_API {
 		$this->client = new SoapClient($this->apiServices[$serviceName], $this->soapOptions);
 		try {
 			$result = $this->client->$methodName(array("Request"=>$request));
+			return $result;
 		} catch (SoapFault $s) {
 			if($this->debugSoapErrors) {
 				echo 'ERROR: [' . $s->faultcode . '] ' . $s->faultstring;
+				return false;
 			}
 		} catch (Exception $e) {
 	    	echo 'ERROR: ' . $e->getMessage();
+	    	return false;
 		}
-		return $result;
 	}
 
 	public function getXMLRequest() {
