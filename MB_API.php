@@ -28,7 +28,10 @@ class MB_API {
 
 	public $soapOptions = array('soap_version'=>SOAP_1_1, 'trace'=>true);
 	public $debugSoapErrors = true;
-		
+	
+	/*
+	** initializes the apiServices and apiMethods arrays
+	*/
 	public function __construct() {
 		// set apiServices array with Mindbody WSDL locations
 		$this->apiServices = array(
@@ -55,6 +58,10 @@ class MB_API {
 		}
 	}
 
+	/*
+	** magic method will search $this->apiMethods array for $name and call the
+	** appropriate Mindbody API method if found
+	*/
 	public function __call($name, $arguments) {
 		// check if method exists on one of mindbody's soap services
 		$soapService = false;
@@ -67,14 +74,27 @@ class MB_API {
 			if(empty($arguments)) {
 				return $this->callMindbodyService($soapService, $name);
 			} else {
-				return $this->callMindbodyService($soapService, $name, $arguments[0]);
+				switch(count($arguments)) {
+					case 1:
+						return $this->callMindbodyService($soapService, $name, $arguments[0]);
+					case 2:
+						return $this->callMindbodyService($soapService, $name, $arguments[0], $arguments[1]);
+				}
 			}
 		} else {
 			echo "called unknown method '$name'<br />";
 		}
 	}
 
-	protected function callMindbodyService($serviceName, $methodName, $requestData = array()) {
+	/*
+	** return the results of a Mindbody API method
+	**
+	** string $serviceName   - Mindbody Soap service name
+	** string $methodName    - Mindbody API method name
+	** array $requestData    - Optional: parameters to API methods
+	** boolean $returnObject - Optional: Return the SOAP response object
+	*/
+	protected function callMindbodyService($serviceName, $methodName, $requestData = array(), $returnObject = false) {
 		$request = array_merge(array("SourceCredentials"=>$this->sourceCredentials),$requestData);
 		if(!empty($this->userCredentials)) {
 			$request = array_merge(array("UserCredentials"=>$this->userCredentials), $request);
@@ -82,7 +102,11 @@ class MB_API {
 		$this->client = new SoapClient($this->apiServices[$serviceName], $this->soapOptions);
 		try {
 			$result = $this->client->$methodName(array("Request"=>$request));
-			return $result;
+			if($returnObject) {
+				return $result;
+			} else {
+				return json_decode(json_encode($result),1);
+			}
 		} catch (SoapFault $s) {
 			if($this->debugSoapErrors) {
 				echo 'ERROR: [' . $s->faultcode . '] ' . $s->faultstring;
@@ -102,6 +126,11 @@ class MB_API {
 		return $this->client->__getLastResponse();
 	}
 
+	/*
+	** overrides SelectDataXml method to remove some invalid XML element names
+	**
+	** string $query - a TSQL query
+	*/
 	public function SelectDataXml($query) {
 		$result = $this->callMindbodyService('DataService', 'SelectDataXml', array('SelectSql'=>$query));
 		$xmlString = $this->getXMLResponse();
