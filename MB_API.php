@@ -126,7 +126,11 @@ class MB_API {
 		return $this->client->__getLastResponse();
 	}
 
-	/*
+	public function makeArray($data) {
+		return (is_array($data)) ? $data : array($data);
+	}
+
+  	/*
 	** overrides SelectDataXml method to remove some invalid XML element names
 	**
 	** string $query - a TSQL query
