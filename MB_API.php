@@ -135,7 +135,7 @@ class MB_API {
 	**
 	** string $query - a TSQL query
 	*/
-	public function SelectDataXml($query) {
+	public function SelectDataXml($query, $returnObject = false) {
 		$result = $this->callMindbodyService('DataService', 'SelectDataXml', array('SelectSql'=>$query));
 		$xmlString = $this->getXMLResponse();
 		// replace some invalid xml element names
@@ -146,7 +146,11 @@ class MB_API {
 		$sxe = new SimpleXMLElement($xmlString);
 		$sxe->registerXPathNamespace("mindbody", "http://clients.mindbodyonline.com/api/0_5");
 		$res = $sxe->xpath("//mindbody:SelectDataXmlResponse");
-		return $res[0];
+		if($returnObject) {
+			return $res[0];
+		} else {
+			return json_decode(json_encode($res[0]),1);
+		}
 	}
 }
 ?>
