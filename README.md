@@ -6,6 +6,16 @@ PHP wrapper class for interacting with Mindbody's API via soap
 update the MB_API.php file with your Mindbody API source credentials. 
 Include the MB_API.php file and call the API methods like this 
 
+	require_once ‘MB_API.php’;
+	$mb = new MB_API();
+
+	// SelectDataXml
+
+	$sql = "SET ROWCOUNT 10 SELECT * FROM Clients";
+	$clients = $mb->SelectDataXml($sql);
+
+	// CheckoutShoppingCart
+
 	$checkoutShoppingCartRequest = $mb->CheckoutShoppingCart(array(
 		'Test'=>'true',
 		'ClientID'=>1234,
