@@ -32,7 +32,7 @@ class MB_API {
 	/*
 	** initializes the apiServices and apiMethods arrays
 	*/
-	public function __construct() {
+	public function __construct($sourceCredentials = array()) {
 		// set apiServices array with Mindbody WSDL locations
 		$this->apiServices = array(
 			'AppointmentService' => $this->appointmentServiceWSDL,
@@ -55,6 +55,22 @@ class MB_API {
 					return substr($n, $start, $length);
 				}, $this->client->__getFunctions()
 			)));	
+		}
+		// set sourceCredentials
+		if(!empty($sourceCredentials)) {
+			if(!empty($sourceCredentials['SourceName'])) {
+				$this->sourceCredentials['SourceName'] = $sourceCredentials['SourceName'];
+			}
+			if(!empty($sourceCredentials['Password'])) {
+				$this->sourceCredentials['Password'] = $sourceCredentials['Password'];
+			}
+			if(!empty($sourceCredentials['SiteIDs'])) {
+				if(is_array($sourceCredentials['SiteIDs'])) {
+					$this->sourceCredentials['SiteIDs'] = $sourceCredentials['SiteIDs'];
+				} else if(is_numeric($sourceCredentials['SiteIDs'])) {
+					$this->sourceCredentials['SiteIDs'] = array($sourceCredentials['SiteIDs']);
+				}
+			}
 		}
 	}
 
