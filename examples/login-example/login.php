@@ -1,5 +1,5 @@
 <?php
-require_once 'MB_API.php';
+require_once '../../MB_API.php';
 $mb = new MB_API();
 
 if(!empty($_POST)) {
@@ -39,6 +39,6 @@ function displayWelcome() {
 	echo "Welcome ".$_SESSION['client']['FirstName'].' '.$_SESSION['client']['LastName'];
 	echo "<br />";
 	echo "<a href='logout.php'>Log out</a>";
-	echo "<pre>".print_r($_SESSION)."</pre>";
+	echo "<pre>".print_r($_SESSION,1)."</pre>";
 }
 ?>
