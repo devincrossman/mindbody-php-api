@@ -32,7 +32,7 @@ class MB_API {
 	/*
 	** initializes the apiServices and apiMethods arrays
 	*/
-	public function __construct() {
+	public function __construct($sourceCredentials = array()) {
 		// set apiServices array with Mindbody WSDL locations
 		$this->apiServices = array(
 			'AppointmentService' => $this->appointmentServiceWSDL,
@@ -55,6 +55,22 @@ class MB_API {
 					return substr($n, $start, $length);
 				}, $this->client->__getFunctions()
 			)));	
+		}
+		// set sourceCredentials
+		if(!empty($sourceCredentials)) {
+			if(!empty($sourceCredentials['SourceName'])) {
+				$this->sourceCredentials['SourceName'] = $sourceCredentials['SourceName'];
+			}
+			if(!empty($sourceCredentials['Password'])) {
+				$this->sourceCredentials['Password'] = $sourceCredentials['Password'];
+			}
+			if(!empty($sourceCredentials['SiteIDs'])) {
+				if(is_array($sourceCredentials['SiteIDs'])) {
+					$this->sourceCredentials['SiteIDs'] = $sourceCredentials['SiteIDs'];
+				} else if(is_numeric($sourceCredentials['SiteIDs'])) {
+					$this->sourceCredentials['SiteIDs'] = array($sourceCredentials['SiteIDs']);
+				}
+			}
 		}
 	}
 
@@ -94,7 +110,7 @@ class MB_API {
 	** array $requestData    - Optional: parameters to API methods
 	** boolean $returnObject - Optional: Return the SOAP response object
 	*/
-	protected function callMindbodyService($serviceName, $methodName, $requestData = array(), $returnObject = false) {
+	protected function callMindbodyService($serviceName, $methodName, $requestData = array(), $returnObject = false, $debugErrors = false) {
 		$request = array_merge(array("SourceCredentials"=>$this->sourceCredentials),$requestData);
 		if(!empty($this->userCredentials)) {
 			$request = array_merge(array("UserCredentials"=>$this->userCredentials), $request);
@@ -108,13 +124,16 @@ class MB_API {
 				return json_decode(json_encode($result),1);
 			}
 		} catch (SoapFault $s) {
-			if($this->debugSoapErrors) {
+			if($this->debugSoapErrors && $debugErrors) {
 				echo 'ERROR: [' . $s->faultcode . '] ' . $s->faultstring;
+				$this->debug();
 				return false;
 			}
 		} catch (Exception $e) {
-	    	echo 'ERROR: ' . $e->getMessage();
-	    	return false;
+		    if($this->debugSoapErrors && $debugErrors) {
+	    	    echo 'ERROR: ' . $e->getMessage();
+	    	    return false;
+	        }
 		}
 	}
 
@@ -126,8 +145,26 @@ class MB_API {
 		return $this->client->__getLastResponse();
 	}
 
-	public function makeArray($data) {
-		return (is_array($data)) ? $data : array($data);
+	public function debug() {
+		echo "<textarea>".print_r($this->getXMLRequest(),1)."</textarea>";
+		echo "<textarea>".print_r($this->getXMLResponse(),1)."</textarea>";
+	}
+
+	public function makeNumericArray($data) {
+		return (isset($data[0])) ? $data : array($data);
+	}
+
+	public function replace_empty_arrays_with_nulls(array $array) {
+		foreach($array as &$value) {
+			if(is_array($value)) {
+				if(empty($value)) {
+					$value = null;
+				} else {
+					$value = $this->replace_empty_arrays_with_nulls($value);
+				}
+			}
+		}
+		return $array;
 	}
 
   	/*
@@ -135,8 +172,8 @@ class MB_API {
 	**
 	** string $query - a TSQL query
 	*/
-	public function SelectDataXml($query, $returnObject = false) {
-		$result = $this->callMindbodyService('DataService', 'SelectDataXml', array('SelectSql'=>$query));
+	public function SelectDataXml($query, $returnObject = false, $debugErrors = false) {
+		$result = $this->callMindbodyService('DataService', 'SelectDataXml', array('SelectSql'=>$query), $returnObject, $debugErrors);
 		$xmlString = $this->getXMLResponse();
 		// replace some invalid xml element names
 		$xmlString = str_replace("Current Series", "CurrentSeries", $xmlString);
@@ -149,7 +186,7 @@ class MB_API {
 		if($returnObject) {
 			return $res[0];
 		} else {
-			return json_decode(json_encode($res[0]),1);
+			return $this->replace_empty_arrays_with_nulls(json_decode(json_encode($res[0]),1));
 		}
 	}
 }
