@@ -3,7 +3,14 @@ mindbody-php-api
 
 PHP wrapper class for interacting with Mindbody's API via soap
 
-update the MB_API.php file with your Mindbody API source credentials. 
+update the MB_API.php file with your Mindbody API source credentials or include them as a parameter to the MB_API constructor
+
+    $mb = new MB_API(array(
+    	"SourceName" => 'YourSourceName',
+    	'Password' => 'YourPassword',
+    	'SiteIDs' => array('YourSiteID')
+    ));
+
 Include the MB_API.php file and call the API methods like this 
 
 	require_once ‘MB_API.php’;
@@ -48,4 +55,5 @@ Include the MB_API.php file and call the API methods like this
 		)
 	));
 
+See the examples folder for other examples
 Check the [API Documentation](https://api.mindbodyonline.com/doc) for more parameters. 
