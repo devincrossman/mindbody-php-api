@@ -142,8 +142,8 @@ class MB_API {
 		return $this->client->__getLastResponse();
 	}
 
-	public function makeArray($data) {
-		return (is_array($data)) ? $data : array($data);
+	public function makeNumericArray($data) {
+		return (isset($data[0])) ? $data : array($data);
 	}
 
   	/*
