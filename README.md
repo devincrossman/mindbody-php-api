@@ -1,9 +1,9 @@
 mindbody-php-api
 ============
 
-PHP wrapper class for interacting with Mindbody's API via soap
+PHP wrapper class for interacting with Mindbody's API via soap. Requires PHP5 with SOAP extension.
 
-update the MB_API.php file with your Mindbody API source credentials or include them as a parameter to the MB_API constructor
+Update the MB_API.php file with your Mindbody API source credentials or include them as a parameter to the MB_API constructor
 
     $mb = new MB_API(array(
     	"SourceName" => 'YourSourceName',
@@ -15,11 +15,6 @@ Include the MB_API.php file and call the API methods like this
 
 	require_once ‘MB_API.php’;
 	$mb = new MB_API();
-
-	// SelectDataXml
-
-	$sql = "SET ROWCOUNT 10 SELECT * FROM Clients";
-	$clients = $mb->SelectDataXml($sql);
 
 	// CheckoutShoppingCart
 
@@ -55,5 +50,33 @@ Include the MB_API.php file and call the API methods like this
 		)
 	));
 
+	// GetServices
+
+	$options = array(
+		'LocationID'=>1,
+		'HideRelatedPrograms'=>true
+	);
+	$servicesData = $mb->GetServices($options);
+
+	// FunctionData
+
+	$options = array(
+		'FunctionName'=>'my_function',
+		'FunctionParams'=>array(
+			array(
+				'ParamName'=>'@startDate',
+				'ParamValue'=>'2014-05-01',
+				'ParamDataType'=>'datetime'
+			),
+			array(
+				'ParamName'=>'@endDate',
+				'ParamValue'=>'2014-05-30',
+				'ParamDataType'=>'datetime'
+			)
+		)
+	);
+	$data = $mb->FunctionDataXml($options);
+
+
 See the examples folder for other examples
-Check the [API Documentation](https://api.mindbodyonline.com/doc) for more parameters. 
+Read MINDBODY's [API Documentation](https://developers.mindbodyonline.com) for more parameters. 
