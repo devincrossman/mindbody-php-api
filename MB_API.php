@@ -167,6 +167,23 @@ class MB_API {
 		return $array;
 	}
 
+	public function FunctionDataXml() {
+		$passed = func_get_args();
+		$request = empty($passed[0]) ? null : $passed[0];
+		$returnObject = empty($passed[1]) ? null : $passed[1];
+		$debugErrors = empty($passed[2]) ? null : $passed[2];
+		$data = $this->callMindbodyService('DataService', 'FunctionDataXml', $request);
+		$xmlString = $this->getXMLResponse();
+		$sxe = new SimpleXMLElement($xmlString);
+		$sxe->registerXPathNamespace("mindbody", "http://clients.mindbodyonline.com/api/0_5");
+		$res = $sxe->xpath("//mindbody:FunctionDataXmlResponse");
+		if($returnObject) {
+			return $res[0];
+		} else {
+			return $this->replace_empty_arrays_with_nulls(json_decode(json_encode($res[0]),1));
+		}
+	}
+
   	/*
 	** overrides SelectDataXml method to remove some invalid XML element names
 	**
