@@ -95,6 +95,8 @@ class MB_API {
 						return $this->callMindbodyService($soapService, $name, $arguments[0]);
 					case 2:
 						return $this->callMindbodyService($soapService, $name, $arguments[0], $arguments[1]);
+					case 3:
+						return $this->callMindbodyService($soapService, $name, $arguments[0], $arguments[1], $arguments[2]);
 				}
 			}
 		} else {
