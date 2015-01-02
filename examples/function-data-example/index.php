@@ -2,8 +2,12 @@
 /*
 Update the FunctionName to your stored procedure name. Each FunctionParam needs a name, value, and datatype
 */
-require '../../MB_API.php';
-$mb = new MB_API();
+require '../../src/MB_API.php';
+$mb = new \DevinCrossman\Mindbody\MB_API(array(
+	"SourceName"=>'REPLACE_WITH_YOUR_SOURCENAME', 
+	"Password"=>'REPLACE_WITH_YOUR_PASSWORD', 
+	"SiteIDs"=>array('REPLACE_WITH_YOUR_SITE_ID')
+));
 $options = array(
 	'FunctionName'=>'my_function',
 	'FunctionParams'=>array(

@@ -1,4 +1,5 @@
 <?php
+namespace DevinCrossman\Mindbody;
 class MB_API {
 	protected $client;
 	protected $sourceCredentials = array(
@@ -46,7 +47,7 @@ class MB_API {
 		);
 		// set apiMethods array with available methods from Mindbody services
 		foreach($this->apiServices as $serviceName => $serviceWSDL) {
-			$this->client = new SoapClient($serviceWSDL, $this->soapOptions);
+			$this->client = new \SoapClient($serviceWSDL, $this->soapOptions);
 			$this->apiMethods = array_merge($this->apiMethods, array($serviceName=>array_map(
 				function($n){
 					$start = 1+strpos($n, ' ');
@@ -117,7 +118,7 @@ class MB_API {
 		if(!empty($this->userCredentials)) {
 			$request = array_merge(array("UserCredentials"=>$this->userCredentials), $request);
 		}
-		$this->client = new SoapClient($this->apiServices[$serviceName], $this->soapOptions);
+		$this->client = new \SoapClient($this->apiServices[$serviceName], $this->soapOptions);
 		try {
 			$result = $this->client->$methodName(array("Request"=>$request));
 			if($returnObject) {
@@ -176,7 +177,7 @@ class MB_API {
 		$debugErrors = empty($passed[2]) ? null : $passed[2];
 		$data = $this->callMindbodyService('DataService', 'FunctionDataXml', $request);
 		$xmlString = $this->getXMLResponse();
-		$sxe = new SimpleXMLElement($xmlString);
+		$sxe = new \SimpleXMLElement($xmlString);
 		$sxe->registerXPathNamespace("mindbody", "http://clients.mindbodyonline.com/api/0_5");
 		$res = $sxe->xpath("//mindbody:FunctionDataXmlResponse");
 		if($returnObject) {
@@ -199,7 +200,7 @@ class MB_API {
 		$xmlString = str_replace("Item#", "ItemNum", $xmlString);
 		$xmlString = str_replace("Massage Therapist", "MassageTherapist", $xmlString);
 		$xmlString = str_replace("Workshop Instructor", "WorkshopInstructor", $xmlString);
-		$sxe = new SimpleXMLElement($xmlString);
+		$sxe = new \SimpleXMLElement($xmlString);
 		$sxe->registerXPathNamespace("mindbody", "http://clients.mindbodyonline.com/api/0_5");
 		$res = $sxe->xpath("//mindbody:SelectDataXmlResponse");
 		if($returnObject) {
