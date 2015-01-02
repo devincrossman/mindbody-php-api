@@ -3,11 +3,10 @@ mindbody-php-api
 
 PHP wrapper class for interacting with Mindbody's API via soap. Requires PHP >= 5.3 with SOAP extension.
 
+Install with composer or clone the repository. Include src/MB_API.php or include vendor/autoload.php if using composer.
+
 Update the MB_API.php file with your Mindbody API source credentials or include them as a parameter to the MB_API constructor
 
-Include the MB_API.php file and call the API methods like this 
-
-	require 'path/to/src/MB_API.php';
 	$mb = new \DevinCrossman\Mindbody\MB_API(array(
 		"SourceName"=>'REPLACE_WITH_YOUR_SOURCENAME', 
 		"Password"=>'REPLACE_WITH_YOUR_PASSWORD', 
