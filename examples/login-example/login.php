@@ -1,6 +1,10 @@
 <?php
-require_once '../../MB_API.php';
-$mb = new MB_API();
+require '../../src/MB_API.php';
+$mb = new \DevinCrossman\Mindbody\MB_API(array(
+	"SourceName"=>'REPLACE_WITH_YOUR_SOURCENAME', 
+	"Password"=>'REPLACE_WITH_YOUR_PASSWORD', 
+	"SiteIDs"=>array('REPLACE_WITH_YOUR_SITE_ID')
+));
 
 if(!empty($_POST)) {
 	$validateLogin = $mb->ValidateLogin(array(

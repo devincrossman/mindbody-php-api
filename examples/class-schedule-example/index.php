@@ -1,6 +1,10 @@
 <?php
-require '../../MB_API.php';
-$mb = new MB_API();
+require '../../src/MB_API.php';
+$mb = new \DevinCrossman\Mindbody\MB_API(array(
+	"SourceName"=>'REPLACE_WITH_YOUR_SOURCENAME', 
+	"Password"=>'REPLACE_WITH_YOUR_PASSWORD', 
+	"SiteIDs"=>array('REPLACE_WITH_YOUR_SITE_ID')
+));
 
 $data = $mb->GetClasses(array('StartDateTime'=>date('Y-m-d'), 'EndDateTime'=>date('Y-m-d', strtotime('today + 7 days'))));
 if(!empty($data['GetClassesResult']['Classes']['Class'])) {
