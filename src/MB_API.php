@@ -183,31 +183,13 @@ class MB_API {
 		if($returnObject) {
 			return $res[0];
 		} else {
-			return $this->replace_empty_arrays_with_nulls(json_decode(json_encode($res[0]),1));
+			$arr = $this->replace_empty_arrays_with_nulls(json_decode(json_encode($res[0]),1));
+			if(is_array($arr['FunctionDataXmlResult']['Results']['Row'])) { 
+				$arr['FunctionDataXmlResult']['Results']['Row'] = $this->makeNumericArray($arr['FunctionDataXmlResult']['Results']['Row']);
+			}
+			return $arr;
 		}
 	}
 
-  	/*
-	** overrides SelectDataXml method to remove some invalid XML element names
-	**
-	** string $query - a TSQL query
-	*/
-	public function SelectDataXml($query, $returnObject = false, $debugErrors = false) {
-		$result = $this->callMindbodyService('DataService', 'SelectDataXml', array('SelectSql'=>$query), $returnObject, $debugErrors);
-		$xmlString = $this->getXMLResponse();
-		// replace some invalid xml element names
-		$xmlString = str_replace("Current Series", "CurrentSeries", $xmlString);
-		$xmlString = str_replace("Item#", "ItemNum", $xmlString);
-		$xmlString = str_replace("Massage Therapist", "MassageTherapist", $xmlString);
-		$xmlString = str_replace("Workshop Instructor", "WorkshopInstructor", $xmlString);
-		$sxe = new \SimpleXMLElement($xmlString);
-		$sxe->registerXPathNamespace("mindbody", "http://clients.mindbodyonline.com/api/0_5");
-		$res = $sxe->xpath("//mindbody:SelectDataXmlResponse");
-		if($returnObject) {
-			return $res[0];
-		} else {
-			return $this->replace_empty_arrays_with_nulls(json_decode(json_encode($res[0]),1));
-		}
-	}
 }
 ?>
