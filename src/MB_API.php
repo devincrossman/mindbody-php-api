@@ -85,6 +85,8 @@ class MB_API {
 		foreach($this->apiMethods as $apiServiceName=>$apiMethods) {
 			if(in_array($name, $apiMethods)) {
 				$soapService = $apiServiceName;
+				//once name is found in apiMethods exit foreach loop.
+				break;
 			}
 		}
 		if(!empty($soapService)) {
