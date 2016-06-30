@@ -186,7 +186,7 @@ class MB_API {
 			return $res[0];
 		} else {
 			$arr = $this->replace_empty_arrays_with_nulls(json_decode(json_encode($res[0]),1));
-			if(is_array($arr['FunctionDataXmlResult']['Results']['Row'])) { 
+			if(isset($arr['FunctionDataXmlResult']['Results']['Row']) && is_array($arr['FunctionDataXmlResult']['Results']['Row'])) { 
 				$arr['FunctionDataXmlResult']['Results']['Row'] = $this->makeNumericArray($arr['FunctionDataXmlResult']['Results']['Row']);
 			}
 			return $arr;
