@@ -27,13 +27,31 @@ class MB_API {
 	protected $apiMethods = array();
 	protected $apiServices = array();
 
-	public $soapOptions = array('soap_version'=>SOAP_1_1, 'trace'=>true);
+	public $soapOptions;
 	public $debugSoapErrors = true;
 	
 	/*
 	** initializes the apiServices and apiMethods arrays
 	*/
 	public function __construct($sourceCredentials = array()) {
+		
+		// Update to use TLS 1.2
+		$this->soapOptions = array(
+            	'soap_version'=>SOAP_1_1,
+            	'trace'=>true,
+            	'stream_context'=> stream_context_create(
+					array(
+						'ssl'=> array(
+							'crypto_method' => STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT,
+							'ciphers' => 'SHA256',
+							'verify_peer'=>false,
+							'verify_peer_name'=>false,
+							'allow_self_signed' => true
+						)
+					)
+				)
+			);
+		
 		// set apiServices array with Mindbody WSDL locations
 		$this->apiServices = array(
 			'AppointmentService' => $this->appointmentServiceWSDL,
